@@ -31,3 +31,6 @@
 /config/credentials/production.key
 
 /vendor/cache
+
+/fe/dist/*
+/fe/node_modules/*
