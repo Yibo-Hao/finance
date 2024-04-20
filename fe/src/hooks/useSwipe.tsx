@@ -24,6 +24,7 @@ export const useSwipe = (element: Ref<HTMLElement | null>) => {
     })
 
     const onStart = (e: TouchEvent) => {
+        e.preventDefault();
         start.value = {
             x: e.touches[0].clientX,
             y: e.touches[0].clientY
@@ -49,9 +50,7 @@ export const useSwipe = (element: Ref<HTMLElement | null>) => {
     onMounted(() => {
         if (!element.value) return;
         element.value.addEventListener('touchstart', onStart)
-
         element.value.addEventListener('touchmove', onMove)
-
         element.value.addEventListener('touchend', onEnd)
     })
 
