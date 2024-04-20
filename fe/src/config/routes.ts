@@ -1,7 +1,9 @@
 import { RouteRecordRaw } from 'vue-router'
 
 import { Welcome } from '../pages/Welcome'
+import { SignIn } from '../pages/SignIn'
 
 export const routes: RouteRecordRaw[] = [
-    {path: '/welcome', component: Welcome},
+    {path: '/', component: Welcome},
+    {path: '/sign-in', component: SignIn},
 ];
