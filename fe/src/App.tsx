@@ -1,4 +1,4 @@
-import { defineComponent, Transition } from 'vue'
+import { defineComponent, Transition, VNode } from 'vue'
 import { RouterView } from "vue-router"
 
 export const App = defineComponent({
@@ -6,7 +6,7 @@ export const App = defineComponent({
         return () => {
             return <>
                 <RouterView>{
-                    ({Component}) => {
+                    ({Component} : { Component: VNode }) => {
                         return (
                         <Transition
                             enterActiveClass='ease-in-out duration-150 transition-opacity'
