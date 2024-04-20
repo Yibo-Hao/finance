@@ -1,7 +1,8 @@
-import { defineComponent } from 'vue';
+import { defineComponent, ref, watchEffect } from 'vue';
 import { useRouter } from 'vue-router';
 
 import Img from '../assets/welcome/welcome_page_01.png';
+import { useSwipe } from '../hooks/useSwipe';
 
 export const Welcome = defineComponent({
     setup() {
@@ -10,9 +11,16 @@ export const Welcome = defineComponent({
             router.push('/sign-in');
         };
 
+        const refMain = ref<HTMLElement | null>(null);
+        const {direction, distance} = useSwipe(refMain);
+
+        watchEffect(() => {
+            console.log(direction.value);        
+        })
+
         return () => (
             <div class="flex justify-between flex-col min-h-dvh py-8 bg-white">
-                <main class="px-2.5">
+                <main class="px-2.5" ref={refMain}>
                     <div class="relative">
                         <div class="w-full h-0 pt-[122%]" />
                         <img src={Img} class="absolute top-0 left-0 w-full" />
