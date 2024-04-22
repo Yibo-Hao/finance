@@ -6,6 +6,5 @@ class Api::V1::ValidationCodesController < ApplicationController
     else
       render json: {errors: validation_code.errors}, status: 400
     end
-    
   end
 end
