@@ -1,5 +1,11 @@
 class Api::V1::ValidationCodesController < ApplicationController
   def create
-    head 201
+    validation_code = ValidationCode.new email: params[:email], kind: 'sign_in'
+    if validation_code.save
+      render status: 200
+    else
+      render json: {errors: validation_code.errors}, status: 400
+    end
+    
   end
 end
