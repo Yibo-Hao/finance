@@ -4,6 +4,8 @@ class ValidationCode < ApplicationRecord
     before_create :generate_code
     after_create :send_email
 
+    enum kind: {sign_in: 0, reset_password: 1}
+
     private
 
     def generate_code
@@ -13,5 +15,4 @@ class ValidationCode < ApplicationRecord
     def send_email
         UserMailer.welcome_email(self.email).deliver_later
     end
-    
 end
