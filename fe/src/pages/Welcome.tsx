@@ -35,7 +35,7 @@ export const Welcome = defineComponent({
         })
 
         return () => (
-            <div class="flex justify-between flex-col min-h-dvh py-8 bg-white">
+            <div class="flex justify-between flex-col min-h-dvh py-8 bg-neutral-100">
                 <main class="px-2.5">
                     <div ref={refImgsWrapper} class="relative overflow-hidden">
                         {
