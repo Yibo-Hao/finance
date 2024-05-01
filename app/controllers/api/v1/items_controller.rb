@@ -1,5 +1,8 @@
 class Api::V1::ItemsController < ApplicationController
     def index
+        current_user = request.env['current_user']
+        return head :401 if current_user.nil?
+
         page_number = params[:page] || 1
         per_page = params[:per_page] || 10
     

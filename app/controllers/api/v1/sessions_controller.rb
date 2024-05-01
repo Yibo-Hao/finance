@@ -27,7 +27,7 @@ class Api::V1::SessionsController < ApplicationController
             end 
         end
 
-        payload = { user_id: user.id, exp: Time.now.to_i + 4 * 3600 }
+        payload = { user_id: user.id, exp: (Time.now + 2.hours).to_i }
         token = JWT.encode payload, Rails.application.credentials.jwt_secret, 'HS256'
         response.headers['jwt'] = "Bearer #{token}"
         render status: 200
