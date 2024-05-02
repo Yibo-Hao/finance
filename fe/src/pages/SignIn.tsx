@@ -69,7 +69,9 @@ export const SignIn = defineComponent({
                             <div class="font-bold text-lg text-black mr-1">
                                 Login
                             </div>
-                            <img src={UserIcon} />
+                            <svg class="svg-icon text-neutral-100">
+                                <use xlinkHref='#sign_in/user_icon.svg'></use>
+                            </svg>
                         </div>
 
                         <div class="text-sm text-main-gray">

@@ -5,3 +5,12 @@
 html {
     font-size: 4.267vw;
 }
+
+@layer components {
+    .svg-icon {
+        width: 1em;
+        height: 1em;
+        vertical-align: -0.15em;
+        @apply fill-current overflow-hidden; 
+    }
+}

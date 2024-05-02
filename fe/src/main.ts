@@ -6,6 +6,8 @@ import { createRouter } from 'vue-router'
 
 import './style/index.css';
 
+import 'virtual:svgstore';
+
 const router = createRouter({
     history,
     routes
