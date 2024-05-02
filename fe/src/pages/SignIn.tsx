@@ -1,6 +1,5 @@
 import {defineComponent, reactive, ref, toRaw} from 'vue';
 
-import UserIcon from '../assets/sign_in/user_icon.svg';
 import MainImage from '../assets/sign_in/main.png';
 import { validate, emailReg } from '../shared/validate';
 
