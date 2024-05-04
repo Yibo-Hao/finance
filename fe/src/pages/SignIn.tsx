@@ -1,4 +1,5 @@
 import {defineComponent, reactive, ref, toRaw} from 'vue';
+import { http } from '../shared/http';
 
 import MainImage from '../assets/sign_in/main.png';
 import { validate, emailReg } from '../shared/validate';
@@ -11,29 +12,49 @@ export const SignIn = defineComponent({
         });        
         const refErrors = reactive<string[]>([]);
         const refSendCode = ref(false);
-        const refCanEdit = ref(false);        
+        const refHasSendCode = ref(false); 
+        const refTimer = ref(0);
+        const refInterval = ref(0);
+
         const validateEmail = () => {
             const formData = toRaw(refFormData);
-            if (!refSendCode.value || refCanEdit.value) {
-                const errors = validate(formData, [
-                    { key: 'email', message: 'Email is required', type: 'required' },
-                    { key: 'email', message: 'Please enter valid email !', type: 'pattern', pattern: emailReg }
-                ]);
+            const errors = validate(formData, [
+                { key: 'email', message: 'Email is required', type: 'required' },
+                { key: 'email', message: 'Please enter valid email !', type: 'pattern', pattern: emailReg }
+            ]);
 
-                if (errors.email?.length) {
-                    refErrors.splice(0, refErrors.length);
-                    errors.email.map((error) => {
-                        refErrors.push(error);
-                    })                        
-                    return;
-                }
-                
+            if (errors.email?.length) {
                 refErrors.splice(0, refErrors.length);
-                refSendCode.value = true;
-                refCanEdit.value = true;
+                errors.email.map((error) => {
+                    refErrors.push(error);
+                })                        
                 return;
             }
+            
+            refErrors.splice(0, refErrors.length);
+            return;
         }
+
+        const startTimer = () => {
+            refTimer.value = 60;
+            clearInterval(refInterval.value);
+            refInterval.value = setInterval(() => {
+                refTimer.value--;
+                if (refTimer.value <= 0) {
+                    clearInterval(refInterval.value);
+                }
+            }, 1000);
+        }
+
+        const sendCode = async () => {
+            if (refTimer.value > 0) return;
+            const formData = toRaw(refFormData);
+            const data = await http.post('/validation_codes', formData);
+            const jwt = data.headers.jwt;      
+            startTimer();
+            refHasSendCode.value = true;
+        }
+
         const validateCode = () => {
             const formData = toRaw(refFormData);
             const errors = validate(formData, [
@@ -52,12 +73,19 @@ export const SignIn = defineComponent({
             refErrors.splice(0, refErrors.length);
             return;
         }
-        const confirm = () => {
-            const formData = toRaw(refFormData);
+
+        const confirm = async () => {
             validateEmail();
             if (refErrors.length) return;
+            refSendCode.value = true;
+            if (!refHasSendCode.value) {
+                await sendCode();
+                return;           
+            }
             validateCode();
             if (refErrors.length) return;
+            const formData = toRaw(refFormData);
+            await http.post('/sessions', formData);
         }
 
         return () => (
@@ -90,25 +118,24 @@ export const SignIn = defineComponent({
 
                     <section class="mb-10">
                         <div class="flex items-center rounded-lg ring-inset ring-gray-300 focus-within:ring-1 focus-within:ring-inset focus-within:ring-main-yellow bg-white p-2 mb-3">
-                            <input v-model={refFormData.email} readonly={refCanEdit.value} type="email" name="email" id="email" autocomplete="email" class="text-sm block flex-1 border-0 bg-white py-1.5 pl-1 text-black placeholder:text-main-gray focus-visible:outline-none autofill:shadow-big-inner" placeholder="Enter Email" />
-                            {
-                                refSendCode.value ? (
-                                    <div
-                                        onClick={() => {
-                                            refCanEdit.value = !refCanEdit.value
-                                        }}
-                                        class="text-xs pr-1 font-bold"
-                                    >
-                                        { refCanEdit.value ? 'Edit' : 'Save' }
-                                    </div>
-                                ) : null
-                            }
+                            <input v-model={refFormData.email} type="email" name="email" id="email" autocomplete="email" class="text-sm block flex-1 border-0 bg-white py-1.5 pl-1 text-black placeholder:text-main-gray focus-visible:outline-none autofill:shadow-big-inner" placeholder="Enter Email" />
                         </div>
                         
                         {
                             refSendCode.value ? (
                                 <div class="flex rounded-lg ring-inset ring-gray-300 focus-within:ring-1 focus-within:ring-inset focus-within:ring-main-yellow bg-white p-2 mb-3">
                                     <input v-model={refFormData.code} type="tel" maxlength="6" class="text-sm block flex-1 border-0 bg-white py-1.5 pl-1 text-black placeholder:text-main-gray focus-visible:outline-none autofill:shadow-big-inner" placeholder="Enter Code" />
+                                    <div class="flex items-center">
+                                        <div class="text-xs pr-1 font-bold" onClick={sendCode}>
+                                            {
+                                                refTimer.value <= 0 ? (
+                                                    'Resend'
+                                                ) : (
+                                                    refTimer.value
+                                                )
+                                            }
+                                        </div>
+                                    </div>
                                 </div>
                             ) : null
                         }

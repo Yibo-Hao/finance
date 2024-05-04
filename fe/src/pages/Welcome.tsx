@@ -52,7 +52,7 @@ export const Welcome = defineComponent({
                                             ? <div
                                                 class={{
                                                     'w-full': true,
-                                                    relative: true
+                                                    'relative': true
                                                 }}
                                                 key={index}
                                             >

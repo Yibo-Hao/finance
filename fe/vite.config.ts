@@ -13,5 +13,12 @@ export default defineConfig({
       mergeProps: true
     }),
     svgstore()
-  ]
+  ],
+  server: {
+    proxy: {
+      '/api/v1': {
+        target: 'http://localhost:3000'
+      }
+    }
+  }
 })
